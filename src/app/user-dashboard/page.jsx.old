@@ -1,0 +1,269 @@
+'use client';
+import Link from 'next/link';
+import { useState } from 'react'; 
+
+// Placeholder for a Logo component or simple text
+const Logo = () => (
+  <a href="/" className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+    isproxy.io
+  </a>
+);
+
+// Specific Icons for Sidebar & Content (Heroicons - outline style, consistent size)
+const IconWrapper = ({ children, className = "w-5 h-5" }) => <div className={className}>{children}</div>;
+
+const OverviewIcon = () => <IconWrapper><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 012.25 2.25v3.75a2.25 2.25 0 01-2.25 2.25H2.25v-8.25zM12 15.75v3.75a2.25 2.25 0 002.25 2.25H18v-8.25h-3.86a2.25 2.25 0 00-2.25 2.25zM21.75 13.5h-3.86a2.25 2.25 0 00-2.25 2.25v3.75a2.25 2.25 0 002.25 2.25H21.75V13.5z" /><path strokeLinecap="round" strokeLinejoin="round" d="M4.125 6.375A2.25 2.25 0 016.375 4.125h11.25c1.243 0 2.25 1.007 2.25 2.25v3.75c0 .412-.168.79-.468 1.075H4.593a2.248 2.248 0 01-1.075-.468V6.375z" /></svg></IconWrapper>;
+const ProxiesIcon = () => <IconWrapper><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M8.111 16.056A7.5 7.5 0 0112 15c1.924 0 3.707.728 5.028 1.948m-5.028-1.948V4.5m0 10.5C8.111 16.056 4.5 15.688 4.5 12V7.5C4.5 5.015 7.875 3 12 3s7.5 2.015 7.5 4.5V12c0 3.688-3.611 4.056-7.5 4.500v0zM12 4.5V2.25m0 18V15m0-10.5v0" /></svg></IconWrapper>;
+const ProfileIcon = () => <IconWrapper><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg></IconWrapper>;
+const BillingIcon = () => <IconWrapper><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" /></svg></IconWrapper>;
+const ApiKeysIcon = () => <IconWrapper><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" /></svg></IconWrapper>;
+const LogoutIcon = () => <IconWrapper><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" /></svg></IconWrapper>;
+const HomeIcon = () => <IconWrapper><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h7.5" /></svg></IconWrapper>;
+
+export default function UserDashboardPage() {
+  const [activeSection, setActiveSection] = useState('overview');
+
+  const user = {
+    email: 'user@example.com', 
+    username: 'TestUser',     
+    credit: 100.50,          
+  };
+
+  const purchasedProxies = [ 
+    { id: 'res123', type: '住宅代理', region: '美国 - 纽约', usage: '15.5 GB / 50 GB', expiry: '2025-06-30', status: 'active' },
+    { id: 'isp456', type: 'ISP代理', region: '日本 - 东京', usage: '5.2 GB / 20 GB', expiry: '2025-07-15', status: 'active' },
+    { id: 'dc789', type: '数据中心代理', region: '德国 - 法兰克福', usage: 'N/A', expiry: '2025-05-20', status: 'expired' },
+  ];
+
+  // Consistent text sizes
+  const sectionTitleClass = "text-xl font-semibold mb-5 text-base-content"; 
+  const cardTitleClass = "card-title text-md font-semibold"; 
+  const baseTextClass = "text-sm text-base-content/85"; // Primary text size for most content
+  // Removed smallTextClass, most of its uses will be replaced by baseTextClass or text-xs where absolutely necessary
+
+  const renderSection = () => {
+    switch (activeSection) {
+      case 'overview':
+        return (
+          <div>
+            <h2 className={sectionTitleClass}>账户概览</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-6">
+              <div className="card bg-base-100 shadow-lg border border-base-300/30 rounded-lg">
+                <div className="card-body p-5">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className={cardTitleClass}>剩余点数</h3>
+                    <div className="badge badge-primary badge-md text-xs">{user.credit.toFixed(2)} Credits</div> {/* Badge text can remain xs */}
+                  </div>
+                  <p className={`${baseTextClass} mt-1`}>当前可用点数，可用于购买或续费代理服务。</p>
+                  <div className="card-actions justify-end mt-4">
+                    <button className="btn btn-primary btn-sm rounded-md text-xs">立即充值</button>
+                  </div>
+                </div>
+              </div>
+              <div className="card bg-base-100 shadow-lg border border-base-300/30 rounded-lg">
+                <div className="card-body p-5">
+                    <h3 className={cardTitleClass}>有效代理</h3>
+                    <p className="text-3xl font-bold text-secondary mt-1 mb-1">{purchasedProxies.filter(p => p.status === 'active').length}</p>
+                    <p className={`${baseTextClass} mt-1`}>当前正在运行的代理服务数量。</p>
+                </div>
+              </div>
+               <div className="card bg-base-100 shadow-lg border border-base-300/30 rounded-lg">
+                <div className="card-body p-5">
+                    <h3 className={cardTitleClass}>欢迎回来, {user.username}!</h3>
+                    <p className={`${baseTextClass} mt-1`}>邮箱: {user.email}</p>
+                    <p className={`${baseTextClass} mt-1`}>上次登录IP: 127.0.0.1 (占位)</p>
+                     <div className="card-actions justify-end mt-4">
+                        <button className="btn btn-outline btn-xs rounded-md" onClick={() => setActiveSection('profile')}>账户设置</button>
+                    </div>
+                </div>
+              </div>
+            </div>
+            
+            <h3 className="text-lg font-semibold mb-3 text-base-content">快速操作</h3>
+             <div className="flex flex-wrap gap-3">
+                <button className="btn btn-secondary btn-sm rounded-md text-xs" onClick={() => setActiveSection('proxies')}>管理我的代理</button>
+                <button className="btn btn-accent btn-sm rounded-md text-xs">购买新代理</button>
+                <button className="btn btn-outline btn-sm rounded-md text-xs">查看账单</button>
+            </div>
+          </div>
+        );
+      case 'proxies':
+        return (
+          <div>
+            <div className="flex justify-between items-center mb-5">
+                <h2 className={sectionTitleClass}>我的代理服务</h2>
+                <button className="btn btn-primary btn-sm rounded-md text-xs">购买新代理</button>
+            </div>
+            <div className="overflow-x-auto bg-base-100 rounded-lg shadow-md border border-base-300/30">
+              <table className="table w-full table-sm">
+                <thead>
+                  <tr>
+                    <th className={`${baseTextClass} font-medium text-base-content/90 px-3 py-2.5`}>ID/备注</th>
+                    <th className={`${baseTextClass} font-medium text-base-content/90 px-3 py-2.5`}>类型</th>
+                    <th className={`${baseTextClass} font-medium text-base-content/90 px-3 py-2.5`}>地区</th>
+                    <th className={`${baseTextClass} font-medium text-base-content/90 px-3 py-2.5`}>用量</th>
+                    <th className={`${baseTextClass} font-medium text-base-content/90 px-3 py-2.5`}>到期时间</th>
+                    <th className={`${baseTextClass} font-medium text-base-content/90 px-3 py-2.5`}>状态</th>
+                    <th className={`${baseTextClass} font-medium text-base-content/90 px-3 py-2.5`}>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {purchasedProxies.map(proxy => (
+                    <tr key={proxy.id} className="hover">
+                      <td className="px-3 py-2.5"><span className="font-mono text-xs text-base-content/80">{proxy.id}</span></td>
+                      <td className={`${baseTextClass} px-3 py-2.5`}>{proxy.type}</td>
+                      <td className={`${baseTextClass} px-3 py-2.5`}>{proxy.region}</td>
+                      <td className={`${baseTextClass} px-3 py-2.5`}>{proxy.usage}</td>
+                      <td className={`${baseTextClass} px-3 py-2.5`}>{proxy.expiry}</td>
+                      <td className="px-3 py-2.5">
+                        <span className={`badge badge-sm ${proxy.status === 'active' ? 'badge-success' : 'badge-error'} text-xs font-medium`}>
+                          {proxy.status === 'active' ? '有效' : '已过期'}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2.5">
+                        <button className="btn btn-xs btn-ghost text-primary text-xs">详情</button>
+                        <button className="btn btn-xs btn-ghost text-orange-500 ml-1 text-xs">续费</button>
+                      </td>
+                    </tr>
+                  ))}
+                  {purchasedProxies.length === 0 && (
+                    <tr><td colSpan="7" className={`text-center py-4 ${baseTextClass} text-base-content/70`}>暂无已购买的代理服务。</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      case 'profile':
+        return (
+          <div>
+            <h2 className={sectionTitleClass}>账户设置</h2>
+            <div className="card bg-base-100 shadow-lg border border-base-300/30 rounded-lg">
+                <div className="card-body p-6">
+                    <h3 className="text-lg font-semibold mb-5 text-base-content">个人信息</h3>
+                    <form className="space-y-3">
+                        <div className="form-control w-full max-w-sm">
+                            <label className="label pb-1 pt-0"><span className={baseTextClass}>用户名</span></label>
+                            <input type="text" defaultValue={user.username} className="input input-bordered input-sm w-full rounded-md text-sm" />
+                        </div>
+                        <div className="form-control w-full max-w-sm">
+                            <label className="label pb-1 pt-0"><span className={baseTextClass}>邮箱地址 (不可修改)</span></label>
+                            <input type="email" defaultValue={user.email} className="input input-bordered input-sm w-full rounded-md text-sm" disabled />
+                        </div>
+                         <div className="form-control mt-5 w-full max-w-sm">
+                            <button type="submit" className="btn btn-primary btn-sm rounded-md text-xs">更新信息</button>
+                        </div>
+                    </form>
+                    <div className="divider my-6"></div>
+                     <h3 className="text-lg font-semibold mb-5 text-base-content">修改密码</h3>
+                     <form className="space-y-3">
+                        <div className="form-control w-full max-w-sm">
+                            <label className="label pb-1 pt-0"><span className={baseTextClass}>当前密码</span></label>
+                            <input type="password" placeholder="请输入当前密码" className="input input-bordered input-sm w-full rounded-md text-sm" />
+                        </div>
+                        <div className="form-control w-full max-w-sm">
+                            <label className="label pb-1 pt-0"><span className={baseTextClass}>新密码</span></label>
+                            <input type="password" placeholder="请输入新密码 (至少6位)" className="input input-bordered input-sm w-full rounded-md text-sm" />
+                        </div>
+                        <div className="form-control w-full max-w-sm">
+                            <label className="label pb-1 pt-0"><span className={baseTextClass}>确认新密码</span></label>
+                            <input type="password" placeholder="请再次输入新密码" className="input input-bordered input-sm w-full rounded-md text-sm" />
+                        </div>
+                         <div className="form-control mt-5 w-full max-w-sm">
+                            <button type="submit" className="btn btn-primary btn-sm rounded-md text-xs">修改密码</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+          </div>
+        );
+      case 'billing':
+        return <div><h2 className={sectionTitleClass}>账单与充值</h2><p className={baseTextClass}>此功能正在建设中...</p></div>;
+      case 'api_keys':
+        return <div><h2 className={sectionTitleClass}>API密钥管理</h2><p className={baseTextClass}>此功能正在建设中...</p></div>;
+      default:
+        return <div className={baseTextClass}>请从左侧选择一个菜单项。</div>;
+    }
+  };
+
+  return (
+    <div data-theme="corporate" className="bg-base-200 min-h-screen flex flex-col font-sans antialiased text-base-content selection:bg-primary selection:text-primary-content">
+      <header className="navbar bg-base-100/90 backdrop-blur-md border-b border-base-300/40 sticky top-0 z-50 shadow-sm">
+        <div className="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 max-w-6xl">
+            <div className="navbar-start flex-shrink-0">
+              <label htmlFor="user-dashboard-drawer" className="btn btn-ghost btn-sm lg:hidden p-1 mr-1 drawer-button">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+              </label>
+              <Logo />
+            </div>
+            <div className="navbar-end space-x-2 flex-shrink-0">
+              <div className="dropdown dropdown-end">
+                <label tabIndex={0} className="btn btn-ghost btn-sm rounded-md flex items-center px-2 py-1 h-auto">
+                  <div className="avatar placeholder btn-xs mr-1.5 online">
+                    <div className="bg-neutral-focus text-neutral-content rounded-full w-6 h-6">
+                      <span className="text-xs">{user.username ? user.username.charAt(0).toUpperCase() : 'U'}</span>
+                    </div>
+                  </div>
+                  <span className="hidden sm:inline text-sm font-medium">{user.username || '我的账户'}</span>
+                  <svg className="w-4 h-4 ml-1 fill-current opacity-70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
+                </label>
+                <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 p-2 shadow-xl bg-base-100 rounded-lg w-56 border border-base-300/50 z-[1]">
+                  <li><a className="text-sm py-2.5 px-3 flex items-center justify-start gap-2.5 hover:bg-base-200/70 rounded-md" onClick={() => {setActiveSection('profile'); if(document.getElementById('user-dashboard-drawer')) document.getElementById('user-dashboard-drawer').checked = false;}}>
+                      <ProfileIcon /> 账户设置
+                  </a></li>
+                  <li><a className="text-sm py-2.5 px-3 flex items-center justify-start gap-2.5 hover:bg-base-200/70 rounded-md">
+                      <IconWrapper className="w-4 h-4"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" /></svg></IconWrapper> 帮助中心
+                  </a></li>
+                  <li className="mt-1.5 px-1">
+                    <button className="btn btn-xs btn-outline btn-error w-full text-xs justify-start gap-2.5 py-2 h-auto">
+                        <LogoutIcon /> 退出登录
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+        </div>
+      </header>
+      
+      <div className="drawer lg:drawer-open flex-grow container mx-auto max-w-6xl mt-4 mb-4 lg:mt-6 lg:mb-6">
+        <input id="user-dashboard-drawer" type="checkbox" className="drawer-toggle" />
+        <div className="drawer-content flex flex-col p-4 sm:p-5 lg:p-0 lg:pl-6">
+          {renderSection()}
+        </div> 
+        <div className="drawer-side lg:rounded-xl lg:shadow-lg z-40 lg:z-auto lg:sticky lg:top-[calc(var(--navbar-height,64px)+1.5rem)] lg:max-h-[calc(100vh-var(--navbar-height,64px)-3rem-env(safe-area-inset-bottom))] overflow-y-auto">
+          <label htmlFor="user-dashboard-drawer" aria-label="close sidebar" className="drawer-overlay"></label> 
+          <ul className="menu p-3 w-60 sm:w-64 min-h-full bg-base-100 text-base-content border-r border-base-300/50 space-y-2.5">
+            <li className="menu-title text-sm px-3 pt-2 pb-1.5 font-semibold text-base-content/90"><span>导航菜单</span></li>
+            {[
+              { label: '账户概览', section: 'overview', icon: <OverviewIcon /> },
+              { label: '我的代理', section: 'proxies', icon: <ProxiesIcon /> },
+              { label: '账户设置', section: 'profile', icon: <ProfileIcon /> },
+              { label: '账单与充值', section: 'billing', icon: <BillingIcon /> },
+              { label: 'API密钥', section: 'api_keys', icon: <ApiKeysIcon /> },
+            ].map(item => (
+              <li key={item.section}>
+                <a 
+                  className={`text-sm py-3 px-3 rounded-lg flex items-center gap-3 transition-colors duration-200 ${activeSection === item.section ? 'active font-semibold bg-primary/10 text-primary' : 'hover:bg-base-200/70'}`} 
+                  onClick={() => {setActiveSection(item.section); if(document.getElementById('user-dashboard-drawer')) document.getElementById('user-dashboard-drawer').checked = false;}}
+                >
+                  {item.icon} {item.label}
+                </a>
+              </li>
+            ))}
+            <div className="divider my-3"></div>
+             <li><Link href="/" className="text-sm py-3 px-3 rounded-lg flex items-center gap-3 hover:bg-base-200/70 transition-colors duration-200"><HomeIcon />返回首页</Link></li>
+             <li><a className="text-sm py-3 px-3 rounded-lg flex items-center gap-3 hover:bg-error/10 text-error transition-colors duration-200"><LogoutIcon />退出登录</a></li>
+          </ul>
+        </div>
+      </div>
+
+       <footer className="footer footer-center p-4 bg-base-100 text-base-content border-t border-base-300/40 mt-auto">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+            <aside>
+                <p className="text-sm text-base-content/75">© {new Date().getFullYear()} isproxy.io - 版权所有。</p>
+            </aside>
+        </div>
+      </footer>
+    </div>
+  );
+}
